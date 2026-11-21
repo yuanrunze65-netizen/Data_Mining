@@ -2,9 +2,17 @@
 __MACOSX/
 ._*
 __pycache__/
+.ipynb_checkpoints/
+.pytest_cache/
 .venv/
+/.codex/
+/.agents/
+/DM_2026_Dataset/
 /_work/
 /results/
 /report/fonts/
 /report/build-course-report/
+实施进度.md
+build-report.ps1
+*.pyc
 *.pth
