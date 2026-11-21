@@ -1,0 +1,5 @@
+_work/
+results/
+__pycache__/
+.venv/
+*.pth
