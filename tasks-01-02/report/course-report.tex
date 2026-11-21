@@ -1,0 +1,44 @@
+% !TeX program = pdflatex
+% !TeX encoding = UTF-8
+\documentclass[sigconf,nonacm,screen]{acmart}
+\usepackage{styles/course-report}
+\graphicspath{{figures/}}
+
+\title[图像聚类与工业缺陷检测]{图像聚类与工业缺陷检测\texorpdfstring{\\}{ · }数据挖掘导论课程报告（任务1与任务2）}
+\input{authors}
+
+\makeatletter
+\def\@ACM@checkaffil{}%
+\makeatother
+
+\begin{abstract}
+本报告使用课程提供的工业图像完成两项实验。图像聚类在冻结的 ResNet-50 特征中融合图像语义、纹理和颜色，随后在局部尺度近邻图上做谱聚类。600 张图像全部与参考类别匹配，调整兰德指数和归一化互信息均为 1.000。异常检测将图像块到正常样本库的最近邻距离与整图支持向量机的判别分数结合。融合权重和阈值由训练集五折验证确定。榛子和拉链两类的独立测试集共 102 张图像，融合模型全部判对，两类的 AUROC、AP 和 F1 均为 1.000。对照实验比较了特征表示、聚类方法和两个异常检测分支。
+\par\noindent\textbf{关键词}\quad 图像聚类、谱聚类、异常检测、最近邻、支持向量机
+\par\medskip
+{\normalfont\zihao{5}\noindent\textbf{Abstract}\quad
+We study image clustering and industrial anomaly detection on the supplied course datasets.
+Locally scaled spectral clustering combines semantic, texture, and colour features. It recovers all six reference classes across 600 images.
+For anomaly detection, we combine nearest-neighbour scores from a normal patch bank with image-level SVM scores.
+Five-fold validation on the training set determines the fusion and thresholds.
+The detector classifies all 102 held-out hazelnut and zipper images correctly, with AUROC, AP, and F1 of 1.000 for each product.
+\par\noindent\raggedright\textbf{Key words}\quad image clustering, spectral clustering, anomaly detection, nearest neighbours, support vector machine\par}
+\end{abstract}
+
+\begin{document}
+\maketitle
+
+\section{引言}
+课程绪论把聚类表述为根据特征空间的距离划分样本，把异常检测表述为从正常行为中识别有实际意义的偏离\cite{courseintro}。在本次作业中，第一项任务需要区分电缆、瓷砖等外观差异较大的产品，第二项任务需要在同种产品内部识别缺陷。前者关注整图的相似性，后者还要保留缺陷附近的局部特征。
+
+两项实验使用作业指定数据与划分。读入时只枚举实际图像目录下的 PNG 文件。聚类集原始分辨率为 $800^2$ 至 $1024^2$ 像素，异常检测集均为 $1024\times1024$ 像素。对解码后的 RGB 像素计算 SHA-256，聚类集无完全重复图像，两类异常检测数据的训练集和测试集之间也无像素完全相同的图像。该核验只覆盖精确重复。实验使用 Python 3.12、PyTorch 2.5.1 和 scikit-learn 1.9.1，在 CPU 上运行，主随机种子设为 2026。
+
+\input{sections/task1}
+\input{sections/task2}
+
+\section{结论}
+在课程聚类集上，颜色与纹理已足以把六类产品分开。局部尺度谱聚类给出了同样的划分，五种邻域大小和十次随机初始化的复算结果一致。在异常检测中，整图深度特征和正常图像块分别提供了互补的判断依据。融合模型在训练折上的排序指标最高，并在独立测试集中与局部模型取得相同的满指标结果。对这批图像而言，局部模型也是准确的实现选择。若后续加入新的成像条件或缺陷类型，应重新检查分数分离程度和判定阈值。
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{course-report-references}
+\end{document}
+
