@@ -9,7 +9,7 @@ from pathlib import Path
 from PIL import Image
 
 
-HERE = Path(__file__).resolve().parent
+from image_common import DATA_ROOT, RESULTS_DIR
 
 
 def scan(paths):
@@ -26,8 +26,8 @@ def scan(paths):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--root", type=Path, default=HERE.parent)
-    parser.add_argument("--output", type=Path, default=HERE / "results")
+    parser.add_argument("--root", type=Path, default=DATA_ROOT)
+    parser.add_argument("--output", type=Path, default=RESULTS_DIR)
     args = parser.parse_args()
     cluster = args.root / "Cluster" / "Cluster"
     cluster_sizes, cluster_content = scan((cluster / "dataset").glob("*.png"))

@@ -1,10 +1,10 @@
 """Unsupervised image clustering followed by a separate label-based evaluation."""
 
 import argparse
-import csv
 from itertools import combinations
 import json
 from pathlib import Path
+import sys
 
 import numpy as np
 from scipy.linalg import eigh
@@ -19,21 +19,12 @@ from sklearn.preprocessing import normalize, StandardScaler
 from threadpoolctl import threadpool_limits
 
 
-HERE = Path(__file__).resolve().parent
+# Keep direct script invocation working from each task directory.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from image_common import DATA_ROOT, RESULTS_DIR, WORK_DIR, scaled_block, write_csv
 SEED = 2026
 K = 6
 NEIGHBOURS = (8, 12, 16, 24, 32)
-
-
-def write_csv(path, header, rows):
-    with path.open("w", encoding="utf-8-sig", newline="") as stream:
-        writer = csv.writer(stream)
-        writer.writerow(header)
-        writer.writerows(rows)
-
-
-def scaled_block(values):
-    return normalize(np.sqrt(np.maximum(values, 0)))
 
 
 def kmeans(values, seed=SEED, restarts=30):
@@ -154,9 +145,9 @@ def evaluate(root, out):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--root", type=Path, default=HERE.parent)
-    parser.add_argument("--cache", type=Path, default=HERE / "_work")
-    parser.add_argument("--output", type=Path, default=HERE / "results")
+    parser.add_argument("--root", type=Path, default=DATA_ROOT)
+    parser.add_argument("--cache", type=Path, default=WORK_DIR)
+    parser.add_argument("--output", type=Path, default=RESULTS_DIR)
     parser.add_argument("--stage", choices=("fit", "evaluate", "both"), default="both")
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)

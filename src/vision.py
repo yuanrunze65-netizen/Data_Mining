@@ -10,11 +10,12 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
+from image_common import DATA_ROOT, WORK_DIR
+
 
 WEIGHT_URL = "https://download.pytorch.org/models/resnet50-11ad3fa6.pth"
 WEIGHT_SHA = "11ad3fa62ca79e40addfd354a8ec4b7c75143b3038b8d2a807fbc68deab379ca"
 CATEGORIES = ("hazelnut", "zipper")
-HERE = Path(__file__).resolve().parent
 
 
 class Bottleneck(nn.Module):
@@ -151,8 +152,8 @@ def extract(model, paths, size, batch_size, device, patches):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--root", type=Path, default=HERE.parent)
-    parser.add_argument("--cache", type=Path, default=HERE / "_work")
+    parser.add_argument("--root", type=Path, default=DATA_ROOT)
+    parser.add_argument("--cache", type=Path, default=WORK_DIR)
     parser.add_argument("--weights", type=Path)
     parser.add_argument("--task", choices=("cluster", "anomaly", "both"), default="both")
     parser.add_argument("--threads", type=int, default=8)

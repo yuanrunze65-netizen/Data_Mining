@@ -1,7 +1,0 @@
-_work/
-results/
-__pycache__/
-.venv/
-*.pth
-report/fonts/
-report/build-course-report/

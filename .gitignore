@@ -1,0 +1,10 @@
+.DS_Store
+__MACOSX/
+._*
+__pycache__/
+.venv/
+/_work/
+/results/
+/report/fonts/
+/report/build-course-report/
+*.pth

@@ -5,6 +5,7 @@ from collections import defaultdict
 import hashlib
 import json
 from pathlib import Path
+import sys
 
 import numpy as np
 from sklearn.metrics import (
@@ -16,10 +17,9 @@ from sklearn.preprocessing import normalize
 from sklearn.svm import SVC
 from threadpoolctl import threadpool_limits
 
-from cluster import scaled_block, write_csv
-
-
-HERE = Path(__file__).resolve().parent
+# Keep direct script invocation working from each task directory.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from image_common import DATA_ROOT, RESULTS_DIR, WORK_DIR, scaled_block, write_csv
 CATEGORIES = ("hazelnut", "zipper")
 SEED = 2026
 FOLDS = 5
@@ -284,9 +284,9 @@ def evaluate(root, out):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--root", type=Path, default=HERE.parent)
-    parser.add_argument("--cache", type=Path, default=HERE / "_work")
-    parser.add_argument("--output", type=Path, default=HERE / "results")
+    parser.add_argument("--root", type=Path, default=DATA_ROOT)
+    parser.add_argument("--cache", type=Path, default=WORK_DIR)
+    parser.add_argument("--output", type=Path, default=RESULTS_DIR)
     parser.add_argument("--stage", choices=("fit", "evaluate", "both"), default="both")
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)

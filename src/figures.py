@@ -12,7 +12,7 @@ from PIL import Image
 from sklearn.metrics import precision_recall_curve, roc_curve
 
 
-HERE = Path(__file__).resolve().parent
+from image_common import DATA_ROOT, PROJECT_ROOT, RESULTS_DIR
 FIGURE_COLOURS = ["#0072B2", "#E69F00", "#009E73", "#CC79A7", "#724E91", "#D55E00"]
 
 
@@ -129,12 +129,12 @@ def anomaly(root, results, output):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--root", type=Path, default=HERE.parent)
-    parser.add_argument("--results", type=Path, default=HERE / "results")
-    parser.add_argument("--output", type=Path, default=HERE / "report" / "figures")
+    parser.add_argument("--root", type=Path, default=DATA_ROOT)
+    parser.add_argument("--results", type=Path, default=RESULTS_DIR)
+    parser.add_argument("--output", type=Path, default=PROJECT_ROOT / "report" / "figures")
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
-    font_path = HERE / "report" / "fonts" / "times.ttf"
+    font_path = DATA_ROOT / "course-report-template" / "fonts" / "times.ttf"
     font_manager.fontManager.addfont(font_path)
     font = font_manager.FontProperties(fname=font_path).get_name()
     plt.rcParams.update({"font.family": font, "font.size": 8, "pdf.fonttype": 42,
