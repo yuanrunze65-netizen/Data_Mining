@@ -39,3 +39,5 @@ latexmk -pdf -outdir=build-course-report course-report.tex
 ```
 
 组员在 main 上协作。先同步远程最新提交，将各自的实验源码放入 src/ 中对应的任务目录，再更新本 README 和 report/ 中相应的章节、图表及参考文献。
+
+提交作业源码、实验报告和复现所需的材料。个人实施记录、本地启动脚本、运行环境和生成缓存留在本地。
