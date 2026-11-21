@@ -44,6 +44,14 @@ python src/figures.py
 
 任务 1 拟合时仅使用图像，类别标签只在评价时读取。任务 2 只使用课程训练集做分层五折验证与阈值选择，测试标签仅在评价时读取。
 
+## 选做二：企业财务问答
+
+[选做二运行说明](src/T5-FinanceQA/README.md)包含数据准备、Flash 作答、Pro 独立评测和实验输出位置。正式测试 19 题均已作答，17 题获得课程检查器支持（89.5%）。查看[报告 PDF](report/financeqa-report.pdf)和 [LaTeX 源码](report/financeqa-report.tex)，正文可合入小组总报告。准备好 report/fonts 后，在 report/ 下执行：
+
+~~~sh
+latexmk -pdf -outdir=build-course-report financeqa-report.tex
+~~~
+
 ## 报告与小组协作
 
 报告正文入口为 [report/course-report.tex](report/course-report.tex)。小组成员信息在 [report/authors.tex](report/authors.tex) 统一填写。编译时，将本地课程模板的 `DM_2026_Dataset/course-report-template/fonts/` 复制为 `report/fonts/`，进入 report/ 后使用 pdfLaTeX 和 BibTeX。安装了 TeX Live 和 latexmk 时，可以运行以下命令。

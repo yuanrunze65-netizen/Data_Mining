@@ -1,0 +1,28 @@
+
+% !TeX program = pdflatex
+% !TeX encoding = UTF-8
+\documentclass[sigconf,nonacm,screen]{acmart}
+\usepackage{styles/course-report}
+\input{sections/financeqa-metrics}
+
+\title[企业财务问答]{基于财务数据库与年报的企业财务问答\\数据挖掘导论课程报告（选做二）}
+\input{authors}
+
+\makeatletter
+\def\@ACM@checkaffil{}%
+\makeatother
+\begin{abstract}
+本文实现了一个企业财务问答 Agent。它按需查询 SQLite 数据库、检索年报和计算指标。用 37 道开发题比较两种检索配置，冻结方法后对 19 道新公司题目作答并独立评分。\FQAbstractCN
+\par\noindent\textbf{关键词}\quad 企业财务问答、工具调用、年报检索、证据溯源
+\par\medskip
+{\normalfont\zihao{5}\noindent\textbf{Abstract}\quad
+We built an agent that queries financial facts, searches annual reports and calculates metrics. We compared two retrieval configurations on 37 development questions, then froze the system and answered 19 questions about unseen companies. \FQAbstractEN
+\par\noindent\textbf{Key words}\quad financial question answering, tool use, annual report retrieval, evidence provenance\par}
+\end{abstract}
+
+\begin{document}
+\maketitle
+\input{sections/financeqa}
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{financeqa-references}
+\end{document}
