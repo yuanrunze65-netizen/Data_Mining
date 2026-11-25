@@ -4,7 +4,8 @@ import json
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-from matplotlib.patches import FancyArrowPatch, FancyBboxPatch, Patch
+from matplotlib.font_manager import FontProperties
+from matplotlib.patches import Ellipse, FancyArrowPatch, FancyBboxPatch, Patch, Polygon
 from matplotlib.ticker import PercentFormatter
 
 INK, MUTED, GRID = "#263747", "#556879", "#E2E9EF"
@@ -101,30 +102,116 @@ def revenue(root, out):
 
 
 def workflow(out):
-    fig, ax = plt.subplots(figsize=(7.25, 1.7), layout="constrained")
-    ax.set(xlim=(0, 12), ylim=(0, 2.75))
+    """Draw the decision loop and its three optional tool types."""
+    font = FontProperties(fname=Path(__file__).resolve().parents[3] / "report/fonts/SimHei.ttf")
+    fig, ax = plt.subplots(figsize=(7.25, 2.52))
+    fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
+    ax.set(xlim=(0, 12), ylim=(0, 4.17), aspect="equal")
     ax.axis("off")
+    azure, jade, amber = "#346EA3", "#137969", "#9D6124"
 
-    def box(x, y, width, height, title, subtitle, edge, fill):
-        ax.add_patch(FancyBboxPatch((x, y), width, height, boxstyle="round,pad=.05,rounding_size=.12",
-                                    facecolor=fill, edgecolor=edge, linewidth=1.1))
-        ax.text(x + width / 2, y + height * .64, title, ha="center", va="center", fontsize=9, fontweight="medium")
-        ax.text(x + width / 2, y + height * .29, subtitle, ha="center", va="center", fontsize=7, color=MUTED)
+    def label(x, y, s, size=10, color=INK, align="center"):
+        ax.text(x, y, s, fontsize=size, fontproperties=font, color=color,
+                ha=align, va="center")
 
-    def arrow(start, end):
-        ax.add_patch(FancyArrowPatch(start, end, arrowstyle="-|>", mutation_scale=10, linewidth=1, color=MUTED))
+    def rounded(x, y, w, h, fill, edge="none", radius=.10, lw=1.2):
+        ax.add_patch(FancyBboxPatch((x, y), w, h,
+                                    boxstyle=f"round,pad=0,rounding_size={radius}",
+                                    facecolor=fill, edgecolor=edge, linewidth=lw))
 
-    box(.2, 1.73, 2.35, .72, "Financial question", "Company ID + question", BLUE, "#EFF4F8")
-    box(4.43, 1.73, 3.15, .72, "Flash chooses next action", "Use the question and evidence so far", TEAL, "#EAF4F3")
-    box(9.45, 1.73, 2.35, .72, "Answer", "Conclusion + source IDs", BLUE, "#EFF4F8")
-    box(3.35, .15, 5.3, .72, "Run the requested tool", "Look up financial facts  /  Search filings  /  Calculate", TEAL, "#EAF4F3")
-    arrow((2.65, 2.09), (4.32, 2.09))
-    arrow((7.68, 2.09), (9.34, 2.09))
-    ax.text(8.49, 2.25, "Ready to answer", ha="center", fontsize=7, color=MUTED)
-    arrow((5.57, 1.65), (5.57, .96))
-    arrow((6.44, .96), (6.44, 1.65))
-    ax.text(5.42, 1.3, "Tool request", ha="right", va="center", fontsize=7, color=MUTED)
-    ax.text(6.59, 1.3, "Tool result", ha="left", va="center", fontsize=7, color=MUTED)
+    def arrow(start, end, color, thick=1.6):
+        ax.add_patch(FancyArrowPatch(start, end, arrowstyle="-|>", mutation_scale=12,
+                                     linewidth=thick, shrinkA=0, shrinkB=0, color=color))
+
+    def icon(kind, x, y, color, pale, scale=1):
+        # Draw each pictogram in local coordinates so it scales as a unit.
+        def point(u, v):
+            return x + u * scale, y + v * scale
+
+        def line(*pairs):
+            px, py = zip(*(point(*p) for p in pairs))
+            ax.plot(px, py, color=color, lw=1.3, solid_capstyle="round",
+                    solid_joinstyle="round", zorder=3)
+
+        def shape(pairs, fill="white"):
+            ax.add_patch(Polygon([point(*p) for p in pairs], closed=True, facecolor=fill,
+                                 edgecolor=color, linewidth=1.35, joinstyle="round", zorder=2))
+
+        def rect(u, v, w, h, fill="white", r=.05):
+            rounded(*point(u, v), w * scale, h * scale, fill, color, r * scale, 1.35)
+
+        def ellipse(u, v, w, h, fill):
+            ax.add_patch(Ellipse(point(u, v), w * scale, h * scale,
+                                 edgecolor=color, facecolor=fill, linewidth=1.3, zorder=2))
+
+        rounded(*point(-.49, -.46), .98 * scale, .92 * scale, pale, radius=.19 * scale)
+        if kind == "question":
+            shape([(-.33, -.17), (-.33, .27), (.33, .27), (.33, -.17),
+                   (.01, -.17), (-.16, -.31), (-.16, -.17)])
+            ax.text(x, y + .052 * scale, "?", color=color, fontsize=18 * scale,
+                    fontweight="bold", ha="center", va="center")
+        elif kind == "agent":
+            line((0, .23), (0, .36))
+            ellipse(0, .37, .078, .078, "white")
+            rect(-.32, -.24, .64, .48)
+            line((-.39, -.13), (-.39, .11))
+            line((.39, -.13), (.39, .11))
+            for u in (-.125, .125):
+                ellipse(u, .06, .075, .075, color)
+            line((-.09, -.095), (.09, -.095))
+        elif kind in ("report", "answer"):
+            shape([(-.25, -.33), (-.25, .33), (.10, .33), (.26, .17), (.26, -.33)])
+            line((.10, .33), (.10, .17), (.26, .17))
+            line((-.14, .07), (.13, .07))
+            line((-.14, -.04), (.06, -.04))
+            if kind == "answer":
+                ellipse(.23, -.20, .32, .32, pale)
+                line((.155, -.20), (.21, -.245), (.302, -.155))
+            else:
+                line((-.14, -.15), (.13, -.15))
+        elif kind == "database":
+            shape([(-.305, -.22), (-.305, .22), (.305, .22), (.305, -.22)],
+                  fill="white")
+            for v in (-.28, -.11, .055, .22):
+                ellipse(0, v, .61, .20, pale if v == .22 else "white")
+            line((-.305, -.28), (-.305, .22))
+            line((.305, -.28), (.305, .22))
+        elif kind == "calculator":
+            rect(-.265, -.34, .53, .68)
+            rect(-.17, .10, .34, .13, pale, .02)
+            for v in (-.08, -.22):
+                for u in (-.15, 0, .15):
+                    ellipse(u, v, .04, .04, color)
+
+    for x, kind, title, subtitle, color, pale in [
+        (1.40, "question", "财务问题", "公司标识与英文问题", azure, "#E7F2FC"),
+        (6.00, "agent", "模型决策", "结合问题与已有证据", jade, "#E2F3EC"),
+        (10.60, "answer", "输出答案", "英文答案与来源编号", amber, "#FCF0DB"),
+    ]:
+        icon(kind, x, 3.56, color, pale, scale=1.16)
+        label(x, 2.84, title, 12)
+        label(x, 2.54, subtitle, 9, MUTED)
+
+    arrow((2.18, 3.55), (5.19, 3.55), "#6694BD")
+    arrow((6.82, 3.55), (9.81, 3.55), "#C69255")
+    label(8.32, 3.80, "证据充分时", 9, amber)
+
+    rounded(1.47, .07, 9.06, 1.66, "#F4FAF7", "#B9D9CC", radius=.18)
+    label(1.76, 1.46, "按需调用工具", 9, jade, align="left")
+    arrow((5.61, 2.32), (5.61, 1.74), jade, 1.35)
+    arrow((6.39, 1.74), (6.39, 2.32), jade, 1.35)
+    label(5.38, 2.04, "发出请求", 9, jade, align="right")
+    label(6.62, 2.04, "返回证据", 9, jade, align="left")
+
+    for x, kind, title, subtitle, color, pale in [
+        (3.32, "database", "查财务数据", "按指定期间提取财务数值", azure, "#E7F2FC"),
+        (6.00, "report", "检索年报", "从年报中定位作答依据", jade, "#E2F3EC"),
+        (8.68, "calculator", "计算指标", "用原始数值算出增幅或占比", amber, "#FCF0DB"),
+    ]:
+        icon(kind, x, 1.02, color, pale, scale=.82)
+        label(x, .48, title, 10)
+        label(x, .24, subtitle, 8, MUTED)
+
     save(fig, out, "financeqa-workflow.pdf")
 
 
@@ -132,9 +219,13 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--results", type=Path, default=Path("results/financeqa"))
     parser.add_argument("--output", type=Path, default=Path("report/figures"))
+    parser.add_argument("--workflow-only", action="store_true", help="Only regenerate the Chinese workflow diagram")
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
     style()
+    if args.workflow_only:
+        workflow(args.output)
+        return
     d = args.results
     outcomes([("Baseline", read(d / "train-basic-v2/evaluation-recovered.json")),
               ("Enhanced", read(d / "train-hybrid-v2/evaluation.json"))],
