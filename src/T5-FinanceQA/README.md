@@ -53,3 +53,11 @@ python $eval --split test --predictions "$out/test/predictions.json" --judge-url
 索引、记录与答案保存在 Git 忽略的本地目录。提交实验材料时将报告、预测、日志、配置与评测结果一起发给课程组。不要把课程原始数据、密钥或测试评测请求中的参考答案加入 Git。
 
 如果评分发生网络超时，可以用 [retry_failed.py](evaluation/retry_failed.py) 在同一份预测上补判失败请求，沿用课程原检查器、提示和模型，另存新文件。原始评分和已成功的逐题评分照常保留。参数见该脚本的 --help。
+
+## 报告图表
+
+安装 Matplotlib 后，在仓库根目录执行：
+
+    python src/T5-FinanceQA/analysis/plot_results.py
+
+开发集和测试集的图直接读取保存的评分，Snowflake 营收图从该题的年度查询日志提取数据。图表以矢量 PDF 写入 report/figures/，不需要重新作答或评分。
