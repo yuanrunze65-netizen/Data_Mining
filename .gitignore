@@ -7,6 +7,7 @@ __pycache__/
 .venv/
 /.codex/
 /.agents/
+/DM_2026_Dataset/
 /_work/
 /results/
 /report/fonts/

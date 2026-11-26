@@ -2,9 +2,13 @@
 
 本仓库是小组实践作业的工作目录。[作业说明](作业说明_2026.pdf)列出了题目、评分项和提交要求。
 
+## 目录结构与数据准备
+
+从[课程组北航云盘](https://bhpan.buaa.edu.cn/link/AA29E06E1DF21C419D9A1F56FFB409B665)下载课程数据和报告模板，将 `DM_2026_Dataset` 压缩包解压到仓库根目录，保留原目录层级。课程数据只在本地使用，Git 不追踪。
+
 | 目录 | 内容 |
 | --- | --- |
-| [DM_2026_Dataset/](DM_2026_Dataset/) | 课程发放的六项材料。保留 Cluster、FinanceQA、Image_Anomaly_Detection、course-report-template、thyroid 的解压目录及 weather.csv |
+| `DM_2026_Dataset/` | 课程发放的六项材料。保留 Cluster、FinanceQA、Image_Anomaly_Detection、course-report-template、thyroid 的解压目录及 weather.csv |
 | [src/T1-cluster/](src/T1-cluster/) | 任务 1，图像无监督聚类 |
 | [src/T2-Image_Anomaly_Detection/](src/T2-Image_Anomaly_Detection/) | 任务 2，图像异常检测 |
 | [src/T3-weather/](src/T3-weather/) | 任务 3，时间序列预测 |
@@ -31,7 +35,7 @@ python src/figures.py
 
 ## 报告与小组协作
 
-报告正文入口为 [report/course-report.tex](report/course-report.tex)。小组成员信息在 [report/authors.tex](report/authors.tex) 统一填写。编译时，将 [课程模板的字体目录](DM_2026_Dataset/course-report-template/fonts/) 复制为 report/fonts/，进入 report/ 后使用 pdfLaTeX 和 BibTeX。安装了 TeX Live 和 latexmk 时，可以运行以下命令。
+报告正文入口为 [report/course-report.tex](report/course-report.tex)。小组成员信息在 [report/authors.tex](report/authors.tex) 统一填写。编译时，将本地课程模板的 `DM_2026_Dataset/course-report-template/fonts/` 复制为 `report/fonts/`，进入 report/ 后使用 pdfLaTeX 和 BibTeX。安装了 TeX Live 和 latexmk 时，可以运行以下命令。
 
 ```sh
 cd report
